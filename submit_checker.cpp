@@ -43,7 +43,7 @@ void SubmitChecker::waitJudge(const string& no)
 	for(int i=1; i <= tc; i++)
 	{
 		int n;
-		while(fscanf(fp,"%d", &tc) == -1);
+		while(fscanf(fp,"%d", &n) == -1);
 		if(n >= 0)
 			break;
 

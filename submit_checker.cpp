@@ -17,7 +17,7 @@ void SubmitChecker::run()
 			searchSubmitQueue();
 		else
 		{
-			query& pick = submitQueue.front();
+			Query& pick = submitQueue.front();
 			check(pick);
 			submitQueue.pop();
 		}
@@ -47,7 +47,7 @@ void waitJudge(const string& no)
 
 		char buf[4];
 		sprintf(buf, "%d", i * 100 / tc);
-		db.getQuery("update solution set state = " + buf + " where no = " + no);
+		db.getQuery("update solution set state = " + string(buf) + " where no = " + no);
 	}
 	
 	fclose(fp);
@@ -55,9 +55,8 @@ void waitJudge(const string& no)
 
 void SubmitChecker::check(const Query& pick)
 {
-	string dockerCommand = "docker run -name test -w /home -v /test/docker/judge:/home submit " +
-		"/home/judge " + pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt" +
-		" > my.txt";
+	string dockerCommand = "docker run -name test -w /home -v /test/docker/judge:/home submit /home/judge " +
+		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
 
 	waitj = thread(&SubmitChecker::waitJudge,this);
@@ -78,6 +77,6 @@ void SubmitChecker::check(const Query& pick)
 	sprintf(buf, "%d", N);
 
 	// judge result
-	db.getQuery("update solution set result = " + buf + " where no = " + no);
+	db.getQuery("update solution set result = " + string(buf) + " where no = " + no);
 	fclose(fp);
 }

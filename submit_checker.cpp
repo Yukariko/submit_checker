@@ -35,7 +35,7 @@ void SubmitChecker::searchSubmitQueue()
 void SubmitChecker::waitJudge(const string& no)
 {
 	FILE *fp;
-	while((fp = fopen("/test/docker/judge/my.txt", "r")) == nullptr);
+	while((fp = fopen("my.txt", "r")) == nullptr);
 
 	int tc;
 	while(fscanf(fp,"%d", &tc) == -1 && globalSwitch == false);

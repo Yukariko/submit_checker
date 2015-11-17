@@ -37,13 +37,13 @@ void SubmitChecker::waitJudge(const string& no)
 	while((fp = fopen("/test/docker/judge/my.txt", "r")) == nullptr);
 
 	int tc;
-	while(fscanf(fp,"%d", &tc) == -1);
+	while(fscanf(fp,"%d", &tc) == -1 && globalSwitch == false);
 	tc = -tc;
 
 	for(int i=1; i <= tc; i++)
 	{
 		int n;
-		while(fscanf(fp,"%d", &n) == -1);
+		while(fscanf(fp,"%d", &n) == -1 && globalSwitch == false);
 		if(n >= 0)
 			break;
 
@@ -61,11 +61,12 @@ void SubmitChecker::check(const Query& pick)
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
 	cout << dockerCommand << endl;
+	globalSwitch = false;
 	waitj = thread(&SubmitChecker::waitJudge, this, ref(pick.getResult(NO)));
 
 	system("rm my.txt");
 	system(dockerCommand.c_str());
-
+	globalSwitch = true;
 	waitj.join();
 	sleep(1);
 

@@ -11,7 +11,7 @@ LIBS = \
 CPPFLAGS = -Wall -O2 -std=c++11 -g 
 LDFLAGS =  $(LIBDIRS) $(LIBS)
 
-bin = judge
+bin = submitChecker
 
 t1 = main
 t2 = submit_checker

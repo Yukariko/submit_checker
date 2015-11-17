@@ -18,7 +18,9 @@ void SubmitChecker::run()
 		else
 		{
 			Query& pick = submitQueue.front();
+			cout << pick.getResult(NO) << " stanby" << endl;
 			check(pick);
+			cout << pick.getResult(NO) << " complete" << endl;
 			submitQueue.pop();
 		}
 	}

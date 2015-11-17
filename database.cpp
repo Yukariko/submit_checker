@@ -51,12 +51,12 @@ void DataBase::getQuery(const string& sql)
 
 void DataBase::getQuery(const string& sql, queue<Query>& submitQueue)
 {
-	if(!mysql_real_query(conn, sql.c_str(), sql.length()))
-	{
-		MYSQL_RES *res = mysql_store_result(conn);
-		MYSQL_ROW row;
-		while((row = mysql_fetch_row(res)) != nullptr)
-			submitQueue.push(Query(row));
-		mysql_free_result(res);
-	}
+	assert(!mysql_real_query(conn, sql.c_str(), sql.length()));
+
+	MYSQL_RES *res = mysql_store_result(conn);
+	MYSQL_ROW row;
+	while((row = mysql_fetch_row(res)) != nullptr)
+		submitQueue.push(Query(row));
+	mysql_free_result(res);
+	cout << submitQueue.size() << endl;
 }

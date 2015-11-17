@@ -7,6 +7,7 @@
 
 DataBase SubmitChecker::db;
 thread SubmitChecker::waitj;
+atomic<bool> SubmitChecker::globalSwitch;
 
 void SubmitChecker::run()
 {

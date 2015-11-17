@@ -10,7 +10,7 @@ using namespace std;
 class Query
 {
 public:
-	Query(const MYSQL_ROW row);
+	Query(const MYSQL_ROW row, int num);
 
 	const string& getResult(int idx) const;
 

@@ -1,6 +1,7 @@
 #include "database.h"
 #include <cstdio>
 #include <assert.h>
+#include <cstring>
 
 #define DEFAULT_CONFIG_PATH "./judge.conf"
 
@@ -55,7 +56,7 @@ void DataBase::getQuery(const string& sql, queue<Query>& submitQueue)
 		MYSQL_RES *res = mysql_store_result(conn);
 		MYSQL_ROW row;
 		while((row = mysql_fetch_row(res)) != nullptr)
-			submitQueue(Query(row));
+			submitQueue.push(Query(row));
 		mysql_free_result(res);
 	}
 }

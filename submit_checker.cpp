@@ -57,10 +57,10 @@ void SubmitChecker::waitJudge(const string& no)
 
 void SubmitChecker::check(const Query& pick)
 {
-	string dockerCommand = "docker run -name test -w /home -v /test/docker/judge:/home submit /home/judge " +
+	string dockerCommand = "docker rm test & docker run -name test -w /home -v /test/docker/judge:/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
-
+	cout << dockerCommand << endl;
 	waitj = thread(&SubmitChecker::waitJudge, this, ref(pick.getResult(NO)));
 
 	system("rm my.txt");

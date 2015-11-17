@@ -36,7 +36,19 @@ DataBase::DataBase()
 	assert(!mysql_real_query(conn, utf8sql, strlen(utf8sql)));
 }
 
-void DataBase::getQuery(const string& sql, queue<query>& submitQueue)
+DataBase::~DataBase()
+{
+	mysql_close(conn);
+}
+
+void DataBase::getQuery(const string& sql)
+{
+	if(!mysql_real_query(conn, sql.c_str(), sql.length()))
+	{
+	}
+}
+
+void DataBase::getQuery(const string& sql, queue<Query>& submitQueue)
 {
 	if(!mysql_real_query(conn, sql.c_str(), sql.length()))
 	{
@@ -44,5 +56,6 @@ void DataBase::getQuery(const string& sql, queue<query>& submitQueue)
 		MYSQL_ROW row;
 		while((row = mysql_fetch_row(res)) != nullptr)
 			submitQueue(Query(row));
+		mysql_free_result(res);
 	}
 }

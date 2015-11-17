@@ -4,10 +4,12 @@
 #include <iostream>
 #include "database.h"
 #include <queue>
+#include <thread>
+#include <atomic>
 
 using namespace std;
 
-#define 
+enum {NO, PROB_NO, LANG};
 
 class SubmitChecker
 {
@@ -15,11 +17,14 @@ public:
 	void run();
 	void searchSubmitQueue();
 	void check(const Query& pick);
-
+	void waitJudge(const string& no);
 
 private:
-	DateBase db;
+	static DateBase db;
+	static thread waitj;
+
 	queue<Query> submitQueue;
+
 };
 
 #endif

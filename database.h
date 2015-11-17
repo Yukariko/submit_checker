@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <mysql/mysql.h>
+#include <queue>
+#include "query.h"
 
 using namespace std;
 
@@ -10,6 +12,9 @@ class DataBase
 {
 public:
 	DataBase();
+	~DataBase();
+
+	void getQuery(const string& sql);
 	void getQuery(const string& sql, queue<Query>& submitQueue);
 
 private:

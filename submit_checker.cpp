@@ -8,7 +8,7 @@
 DataBase SubmitChecker::db;
 thread SubmitChecker::waitj;
 
-SubmitChecker::run()
+void SubmitChecker::run()
 {
 	while(true)
 	{
@@ -24,7 +24,7 @@ SubmitChecker::run()
 	}
 }
 
-SubmitChecker::searchSubmitQueue()
+void SubmitChecker::searchSubmitQueue()
 {
 	db.getQuery("select no, prob_no, lang from solution where result = -1", submitQueue);
 }
@@ -53,7 +53,7 @@ void waitJudge(const string& no)
 	fclose(fp);
 }
 
-SubmitChecker::check(const Query& pick)
+void SubmitChecker::check(const Query& pick)
 {
 	string dockerCommand = "docker run -name test -w /home -v /test/docker/judge:/home submit " +
 		"/home/judge " + pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt" +

@@ -29,7 +29,7 @@ void SubmitChecker::searchSubmitQueue()
 	db.getQuery("select no, prob_no, lang from solution where result = -1", submitQueue);
 }
 
-void waitJudge(const string& no)
+void SubmitChecker::waitJudge(const string& no)
 {
 	FILE *fp;
 	while((fp = fopen("/test/docker/judge/my.txt", "r")) == nullptr);
@@ -77,6 +77,6 @@ void SubmitChecker::check(const Query& pick)
 	sprintf(buf, "%d", N);
 
 	// judge result
-	db.getQuery("update solution set result = " + string(buf) + " where no = " + no);
+	db.getQuery("update solution set result = " + string(buf) + " where no = " + pick.getResult(NO));
 	fclose(fp);
 }

@@ -20,7 +20,7 @@ public:
 	void waitJudge(const string& no);
 
 private:
-	static DateBase db;
+	static DataBase db;
 	static thread waitj;
 
 	queue<Query> submitQueue;

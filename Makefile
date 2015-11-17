@@ -3,9 +3,13 @@ INCLUDEDIRS = \
 LIBDIRS = \
 
 LIBS = \
+	-pthread \
+	-lmysqlclient \
+
+
 
 CPPFLAGS = -Wall -O2 -std=c++11 -g 
-LDFLAGS =  $(LIBDIRS) $(LIBS) -pthread
+LDFLAGS =  $(LIBDIRS) $(LIBS)
 
 bin = judge
 

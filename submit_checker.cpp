@@ -6,7 +6,6 @@
 #include <assert.h>
 
 DataBase SubmitChecker::db;
-atomic<bool> SubmitChecker::globalSwitch;
 thread SubmitChecker::waitj;
 
 SubmitChecker::run()
@@ -75,7 +74,10 @@ SubmitChecker::check(const Query& pick)
 	int N;
 	while(fscanf(fp, "%d", &N), N < 0);
 
-	// judge result
+	char buf[10];
+	sprintf(buf, "%d", N);
 
+	// judge result
+	db.getQuery("update solution set result = " + buf + " where no = " + no);
 	fclose(fp);
 }

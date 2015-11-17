@@ -59,7 +59,7 @@ void SubmitChecker::check(const Query& pick)
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
 
-	waitj = thread(&SubmitChecker::waitJudge, pick.getResult(NO), this);
+	waitj = thread(&SubmitChecker::waitJudge, ref(pick.getResult(NO)), this);
 
 	system("rm my.txt");
 	system(dockerCommand.c_str());

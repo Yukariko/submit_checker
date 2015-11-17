@@ -13,16 +13,16 @@ DataBase::DataBase()
 	fscanf(fp, "%d",&port);
 
 	char buf[256];
-	scanf("%s", buf);
+	fscanf(fp, "%s", buf);
 	host = buf;
 
-	scanf("%s", buf);
+	fscanf(fp, "%s", buf);
 	user = buf;
 
-	scanf("%s", buf);
+	fscanf(fp, "%s", buf);
 	password = buf;
 
-	scanf("%s", buf);
+	fscanf(fp, "%s", buf);
 	db = buf;
 
 	fclose(fp);

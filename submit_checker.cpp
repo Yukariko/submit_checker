@@ -19,9 +19,9 @@ void SubmitChecker::run()
 		else
 		{
 			Query& pick = submitQueue.front();
-			cout << pick.getResult(NO) << " stanby" << endl;
+			//cout << pick.getResult(NO) << " stanby" << endl;
 			check(pick);
-			cout << pick.getResult(NO) << " complete" << endl;
+			//cout << pick.getResult(NO) << " complete" << endl;
 			submitQueue.pop();
 		}
 	}
@@ -61,7 +61,7 @@ void SubmitChecker::check(const Query& pick)
 	string dockerCommand = "docker rm test & docker run --name=test -w /home -v /test/docker/judge:/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
-	cout << dockerCommand << endl;
+	//cout << dockerCommand << endl;
 	globalSwitch = false;
 	waitj = thread(&SubmitChecker::waitJudge, this, ref(pick.getResult(NO)));
 

@@ -58,5 +58,5 @@ void DataBase::getQuery(const string& sql, queue<Query>& submitQueue)
 	while((row = mysql_fetch_row(res)) != nullptr)
 		submitQueue.push(Query(row, mysql_num_fields(res)));
 	mysql_free_result(res);
-	cout << submitQueue.size() << endl;
+	//cout << submitQueue.size() << endl;
 }

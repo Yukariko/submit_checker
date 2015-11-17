@@ -22,6 +22,7 @@ public:
 private:
 	static DataBase db;
 	static thread waitj;
+	static atomic<bool> globalSwitch;
 
 	queue<Query> submitQueue;
 

@@ -29,7 +29,7 @@ void SubmitChecker::run()
 
 void SubmitChecker::searchSubmitQueue()
 {
-	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 2", submitQueue);
+	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 2 order by id asc", submitQueue);
 }
 
 void SubmitChecker::waitJudge(const string& no)
@@ -86,6 +86,11 @@ void SubmitChecker::check(const Query& pick)
 	createCode(codeQueue.front().getResult(0), pick.getResult(LANG));
 	codeQueue.pop();
 
+
+	char buf[10];
+	sprintf(buf, "%d", RUNNING);
+	db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
+
 	string dockerCommand = "docker rm test & docker run --name=test -w /home -v /test/docker/judge:/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
@@ -105,7 +110,6 @@ void SubmitChecker::check(const Query& pick)
 	int N;
 	while(fscanf(fp, "%d", &N), N < 0);
 
-	char buf[10];
 	sprintf(buf, "%d", N);
 
 	// judge result

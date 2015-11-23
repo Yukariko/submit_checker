@@ -29,7 +29,7 @@ void SubmitChecker::run()
 
 void SubmitChecker::searchSubmitQueue()
 {
-	db.getQuery("select no, prob_no, lang from solution where result = -1", submitQueue);
+	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 1", submitQueue);
 }
 
 void SubmitChecker::waitJudge(const string& no)
@@ -50,14 +50,42 @@ void SubmitChecker::waitJudge(const string& no)
 
 		char buf[4];
 		sprintf(buf, "%d", i * 100 / tc);
-		db.getQuery("update solution set state = " + string(buf) + " where no = " + no);
+		//db.getQuery("update solution set state = " + string(buf) + " where no = " + no);
 	}
 	
 	fclose(fp);
 }
 
+void SubmitChecker::createCode(const string& code, const string& lang) const
+{
+	const char *langCode[] = {"", "test.c", "test.cpp", "test.cpp"};
+	char buf[256];
+	sprintf(buf, "/test/docker/judge/%s", langCode[atoi(lang.c_str())]);
+	FILE *fp = fopen(buf, "w");
+	assert(fp != nullptr);
+
+	for(int i=0; i < code.length(); i += 4096)
+		fwrite(code.c_str() + i, min(4096, code.length() - i), 1, fp);
+
+	fclose(fp);
+}
+
 void SubmitChecker::check(const Query& pick)
 {
+	queue<Query> codeQueue;
+	db.getQuery("select code from codes where id = " + pick.getResult(NO), codeQueue);
+
+	if(codeQueue.empty())
+	{
+		char buf[10];
+		sprintf(buf, "%d", OJ_MISS);
+		db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
+		return;
+	}
+
+	createCode(codeQueue.front().getResult(0), pick.getResult(LANG));
+	codeQueue.pop();
+
 	string dockerCommand = "docker rm test & docker run --name=test -w /home -v /test/docker/judge:/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
@@ -81,6 +109,6 @@ void SubmitChecker::check(const Query& pick)
 	sprintf(buf, "%d", N);
 
 	// judge result
-	db.getQuery("update solution set result = " + string(buf) + " where no = " + pick.getResult(NO));
+	db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
 	fclose(fp);
 }

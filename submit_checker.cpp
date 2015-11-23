@@ -65,7 +65,7 @@ void SubmitChecker::createCode(const string& code, const string& lang) const
 	assert(fp != nullptr);
 
 	for(int i=0; i < code.length(); i += 4096)
-		fwrite(code.c_str() + i, min(4096, code.length() - i), 1, fp);
+		fwrite(code.c_str() + i, min<int>(4096, code.length() - i), 1, fp);
 
 	fclose(fp);
 }

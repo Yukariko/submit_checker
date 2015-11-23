@@ -86,8 +86,7 @@ void SubmitChecker::check(const Query& pick)
 	createCode(codeQueue.front().getResult(0), pick.getResult(LANG));
 	codeQueue.pop();
 
-
-	char buf[10];
+	char buf[256];
 	sprintf(buf, "%d", RUNNING);
 	db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
 
@@ -110,9 +109,13 @@ void SubmitChecker::check(const Query& pick)
 	int N;
 	while(fscanf(fp, "%d", &N), N < 0);
 
-	sprintf(buf, "%d", N);
+	int cpuTime = -1, memory = -1;
+	if(N != COMPILE_ERROR)
+		assert(scanf("%d%d", &cpuTime, &memory) == 2);
+
+	sprintf(buf, "result_id = %d, time = %d, memory = %d", N, cpuTime, memory);
 
 	// judge result
-	db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
+	db.getQuery("update solutions set " + string(buf) + " where id = " + pick.getResult(NO));
 	fclose(fp);
 }

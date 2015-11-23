@@ -110,7 +110,7 @@ void SubmitChecker::check(const Query& pick)
 	while(fscanf(fp, "%d", &N), N < 0);
 
 	int cpuTime = -1, memory = -1;
-	if(N != COMPILE_ERROR)
+	if(N == ACCEPT)
 		assert(scanf("%d%d", &cpuTime, &memory) == 2);
 
 	sprintf(buf, "result_id = %d, time = %d, memory = %d", N, cpuTime, memory);

@@ -90,7 +90,7 @@ void SubmitChecker::check(const Query& pick)
 	sprintf(buf, "%d", RUNNING);
 	db.getQuery("update solutions set result_id = " + string(buf) + " where id = " + pick.getResult(NO));
 
-	string dockerCommand = "docker rm test & docker run --name=test --privileged -w /home -v /test/docker/judge:/home submit /home/judge " +
+	string dockerCommand = "docker run --name=test --privileged --rm -w /home -v /test/docker/judge:/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
 
 	//cout << dockerCommand << endl;

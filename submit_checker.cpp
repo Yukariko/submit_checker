@@ -29,7 +29,7 @@ void SubmitChecker::run()
 
 void SubmitChecker::searchSubmitQueue()
 {
-	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 1", submitQueue);
+	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 2", submitQueue);
 }
 
 void SubmitChecker::waitJudge(const string& no)

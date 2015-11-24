@@ -86,7 +86,7 @@ void SubmitChecker::createCode(const string& code, const string& lang) const
 	FILE *fp = fopen(buf, "w");
 	assert(fp != nullptr);
 
-	for(int i=0; i < code.length(); i += 4096)
+	for(size_t i=0; i < code.length(); i += 4096)
 		fwrite(code.c_str() + i, min<int>(4096, code.length() - i), 1, fp);
 
 	fclose(fp);
@@ -126,8 +126,8 @@ void SubmitChecker::check(const Query& pick)
 	globalSwitch = false;
 	waitj = thread(&SubmitChecker::waitJudge, this, ref(pick.getResult(NO)));
 
-	system("rm my.txt");
-	system(dockerCommand.c_str());
+	assert(system("rm my.txt") != -1);
+	assert(system(dockerCommand.c_str()) != -1);
 	globalSwitch = true;
 	waitj.join();
 

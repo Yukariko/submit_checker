@@ -8,14 +8,20 @@
 
 using namespace std;
 
+/*
+ * 데이터베이스에 연결하고 쿼리를 수행하는 클래스
+ */
+
 class DataBase
 {
 public:
 	DataBase();
 	~DataBase();
 
+	// update 같은 결과를 가져오지 않는 쿼리 수행
 	void getQuery(const string& sql);
-	void getQuery(const string& sql, queue<Query>& submitQueue);
+	// select 같은 결과가 필요한 쿼리 수행
+	void getQuery(const string& sql, queue<Query>& queryQueue);
 
 private:
 	MYSQL *conn;

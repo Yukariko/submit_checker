@@ -7,26 +7,34 @@
 
 DataBase::DataBase()
 {
+	// conf 파일에서 설정값들을 읽어옴
 	FILE *fp = fopen(DEFAULT_CONFIG_PATH, "r");
 	assert(fp != nullptr);
 
-	fscanf(fp, "%d",&port);
+	// 포트번호 입력
+	assert(fscanf(fp, "%d",&port) == 1);
 
 	char buf[256];
-	fscanf(fp, "%s", buf);
+
+	// host 주소 입력
+	assert(fscanf(fp, "%s", buf) == 1);
 	host = buf;
 
-	fscanf(fp, "%s", buf);
+	// user id 입력
+	assert(fscanf(fp, "%s", buf) == 1);
 	user = buf;
 
-	fscanf(fp, "%s", buf);
+	// user pw 입력
+	assert(fscanf(fp, "%s", buf) == 1);
 	password = buf;
 
-	fscanf(fp, "%s", buf);
+	// DB 명 입력
+	assert(fscanf(fp, "%s", buf) == 1);
 	db = buf;
 
 	fclose(fp);
 
+	// DB 연결
 	conn = mysql_init(NULL);
 
 	const char timeout = 30;
@@ -44,19 +52,20 @@ DataBase::~DataBase()
 
 void DataBase::getQuery(const string& sql)
 {
-	if(!mysql_real_query(conn, sql.c_str(), sql.length()))
+	// 예외처리를 따로 하지 않음 
+	if(mysql_real_query(conn, sql.c_str(), sql.length()))
 	{
+		cout << "[Error] Query Fail : " << sql << endl;
 	}
 }
 
-void DataBase::getQuery(const string& sql, queue<Query>& submitQueue)
+void DataBase::getQuery(const string& sql, queue<Query>& queryQueue)
 {
+	// 쿼리 결과를 queue에 저장
 	assert(!mysql_real_query(conn, sql.c_str(), sql.length()));
-
 	MYSQL_RES *res = mysql_store_result(conn);
 	MYSQL_ROW row;
 	while((row = mysql_fetch_row(res)) != nullptr)
-		submitQueue.push(Query(row, mysql_num_fields(res)));
+		queryQueue.push(Query(row, mysql_num_fields(res)));
 	mysql_free_result(res);
-	//cout << submitQueue.size() << endl;
 }

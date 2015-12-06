@@ -179,8 +179,8 @@ void SubmitChecker::check(const Query& pick)
 
 	db.getQuery("update problems set total_submit = total_submit + 1 where id = " + pick.getResult(PROB_NO));
 	if(firstClear)
-		db.getQuery("update users set total_submit = total_submit + 1, total_clear = total_clear + 1 where id = " + pick.getResult(PROB_NO));
+		db.getQuery("update users set total_submit = total_submit + 1, total_clear = total_clear + 1 where id = " + pick.getResult(USER_NO));
 	else
-		db.getQuery("update users set total_submit = total_submit + 1 where id = " + pick.getResult(PROB_NO));
+		db.getQuery("update users set total_submit = total_submit + 1 where id = " + pick.getResult(USER_NO));
 	fclose(fp);
 }

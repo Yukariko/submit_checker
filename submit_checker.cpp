@@ -153,6 +153,18 @@ void SubmitChecker::check(const Query& pick)
 
 	assert(sprintf(buf, "%d", N) > 0);
 
+	queue<Query> statQueue;
+
+	bool firstClear = false;
+	if(N == ACCEPT)
+	{
+		db.getQuery("select count from statistics where problem_id = " + pick.getResult(PROB_NO)\
+					 + " and user_id = " + pick.getResult(USER_NO) + " and result_id = " + string(buf), statQueue);
+		if(statQueue.size() && statQueue.front().getResult(0) > 0)
+			firstClear = true;
+	}
+
+
 	db.getQuery("insert into statistics (problem_id, user_id, result_id, count) values ("\
 					 + pick.getResult(PROB_NO) + "," + pick.getResult(USER_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
@@ -164,5 +176,11 @@ void SubmitChecker::check(const Query& pick)
 	db.getQuery("insert into user_statistics (user_id, result_id, count) values ("\
 					 + pick.getResult(USER_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	db.getQuery("update problems set total_submit = total_submit + 1 where id = " + pick.getResult(PROB_NO);
+	if(firstClear)
+		db.getQuery("update users set total_submit = total_submit + 1, total_clear = total_clear + 1 where id = " + pick.getResult(PROB_NO);
+	else
+		db.getQuery("update users set total_submit = total_submit + 1 where id = " + pick.getResult(PROB_NO);
 	fclose(fp);
 }

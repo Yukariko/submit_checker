@@ -177,10 +177,7 @@ void SubmitChecker::check(const Query& pick)
 					 + pick.getResult(USER_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
 
-	db.getQuery("update problems set total_submit = total_submit + 1 where id = " + pick.getResult(PROB_NO));
 	if(firstClear)
-		db.getQuery("update users set total_submit = total_submit + 1, total_clear = total_clear + 1 where id = " + pick.getResult(USER_NO));
-	else
-		db.getQuery("update users set total_submit = total_submit + 1 where id = " + pick.getResult(USER_NO));
+		db.getQuery("update users set total_clear = total_clear + 1 where id = " + pick.getResult(USER_NO));
 	fclose(fp);
 }

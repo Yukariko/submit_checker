@@ -30,7 +30,7 @@ void SubmitChecker::run()
 void SubmitChecker::searchSubmitQueue()
 {
 	// result_id = 2 -> 대기중
-	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 2 order by id asc", submitQueue);
+	db.getQuery("select id, problem_id, user_id, lang_id from solutions where result_id = 2 order by id asc", submitQueue);
 }
 
 /*
@@ -151,5 +151,17 @@ void SubmitChecker::check(const Query& pick)
 
 	// judge result
 	db.getQuery("update solutions set " + string(buf) + " where id = " + pick.getResult(NO));
+
+	db.getQuery("insert into statistics (problem_id, user_id, result_id, count) values ("\
+					 + pick.getResult(PROB_NO) + "," + pick.getResult(USER_NO) + "," + pick.getResult(LANG)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	db.getQuery("insert into problem_statistics (problem_id, result_id, count) values ("\
+					 + pick.getResult(PROB_NO) + "," + pick.getResult(LANG)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	db.getQuery("insert into user_statistics (user_id, result_id, count) values ("\
+					 + pick.getResult(USER_NO) + "," + pick.getResult(LANG)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
 	fclose(fp);
 }

@@ -160,7 +160,7 @@ void SubmitChecker::check(const Query& pick)
 	{
 		db.getQuery("select count from statistics where problem_id = " + pick.getResult(PROB_NO)\
 					 + " and user_id = " + pick.getResult(USER_NO) + " and result_id = " + string(buf), statQueue);
-		if(statQueue.size() && atoi(statQueue.front().getResult(0).c_str()) > 0)
+		if(!statQueue.size() || atoi(statQueue.front().getResult(0).c_str()) == 0)
 			firstClear = true;
 	}
 

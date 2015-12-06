@@ -148,20 +148,21 @@ void SubmitChecker::check(const Query& pick)
 		assert(fscanf(fp, "%d%d", &cpuTime, &memory) == 2);
 
 	assert(sprintf(buf, "result_id = %d, time = %d, memory = %d", N, cpuTime, memory) > 0);
-
 	// judge result
 	db.getQuery("update solutions set " + string(buf) + " where id = " + pick.getResult(NO));
 
+	assert(sprintf(buf, "%d", N) > 0);
+
 	db.getQuery("insert into statistics (problem_id, user_id, result_id, count) values ("\
-					 + pick.getResult(PROB_NO) + "," + pick.getResult(USER_NO) + "," + pick.getResult(LANG)\
+					 + pick.getResult(PROB_NO) + "," + pick.getResult(USER_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
 
 	db.getQuery("insert into problem_statistics (problem_id, result_id, count) values ("\
-					 + pick.getResult(PROB_NO) + "," + pick.getResult(LANG)\
+					 + pick.getResult(PROB_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
 
 	db.getQuery("insert into user_statistics (user_id, result_id, count) values ("\
-					 + pick.getResult(USER_NO) + "," + pick.getResult(LANG)\
+					 + pick.getResult(USER_NO) + "," + string(buf)\
 					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
 	fclose(fp);
 }

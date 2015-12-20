@@ -82,7 +82,7 @@ void SubmitChecker::createCode(const string& code, const string& lang) const
 	// 언어에 해당하는 확장자로 파일을 생성
 	const char *langCode[] = {"", "test.c", "test.cpp", "test.cpp"};
 	char buf[256];
-	sprintf(buf, "/test/docker/judge/%s", langCode[atoi(lang.c_str())]);
+	sprintf(buf, "%s/%s", db.getDataPath().c_str(), langCode[atoi(lang.c_str())]);
 	FILE *fp = fopen(buf, "w");
 	assert(fp != nullptr);
 

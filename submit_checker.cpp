@@ -119,7 +119,7 @@ void SubmitChecker::check(const Query& pick)
 	// 도커 명령 실행
 	// --privileged : ptrace를 하기 위한 설정
 	// --rm 도커가 끝나면 자동으로 종료 (이게 안되는 경우가 생기면 오류발생)
-	string dockerCommand = "docker run --name=test --privileged --rm -w /home -v /test/docker/judge:/home submit /home/judge " +
+	string dockerCommand = "docker run --name=test --privileged --rm -w /home -v " + db.getDataPath() + ":/home submit /home/judge " +
 		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + " > my.txt";
 
 	// 채점 진행률 쓰레드 생성

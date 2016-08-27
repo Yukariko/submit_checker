@@ -23,6 +23,9 @@ public:
 	// select 같은 결과가 필요한 쿼리 수행
 	void getQuery(const string& sql, queue<Query>& queryQueue);
 
+	// data 경로 반환
+	const string& getDataPath() const;
+
 private:
 	MYSQL *conn;
 	int port;
@@ -30,6 +33,7 @@ private:
 	string user;
 	string password;
 	string db;
+	string dataPath;
 };
 
 #endif

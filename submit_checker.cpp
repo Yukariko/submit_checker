@@ -30,7 +30,7 @@ void SubmitChecker::run()
 void SubmitChecker::searchSubmitQueue()
 {
 	// result_id = 2 -> 대기중
-	db.getQuery("select id, problem_id, lang_id from solutions where result_id = 2 order by id asc", submitQueue);
+	db.getQuery("select id, problem_id, user_id, lang_id from solutions where result_id = 2 order by id asc", submitQueue);
 }
 
 /*
@@ -82,11 +82,11 @@ void SubmitChecker::createCode(const string& code, const string& lang) const
 	// 언어에 해당하는 확장자로 파일을 생성
 	const char *langCode[] = {"", "test.c", "test.cpp", "test.cpp"};
 	char buf[256];
-	sprintf(buf, "/test/docker/judge/%s", langCode[atoi(lang.c_str())]);
+	sprintf(buf, "%s/%s", db.getDataPath().c_str(), langCode[atoi(lang.c_str())]);
 	FILE *fp = fopen(buf, "w");
 	assert(fp != nullptr);
 
-	for(int i=0; i < code.length(); i += 4096)
+	for(size_t i=0; i < code.length(); i += 4096)
 		fwrite(code.c_str() + i, min<int>(4096, code.length() - i), 1, fp);
 
 	fclose(fp);
@@ -119,15 +119,15 @@ void SubmitChecker::check(const Query& pick)
 	// 도커 명령 실행
 	// --privileged : ptrace를 하기 위한 설정
 	// --rm 도커가 끝나면 자동으로 종료 (이게 안되는 경우가 생기면 오류발생)
-	string dockerCommand = "docker run --name=test --privileged --rm -w /home -v /test/docker/judge:/home submit /home/judge " +
-		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + "/input.txt > my.txt";
+	string dockerCommand = "docker run --name=test --privileged --rm -w /home -v " + db.getDataPath() + ":/home submit /home/judge " +
+		pick.getResult(LANG) + " /home/data/" + pick.getResult(PROB_NO) + " > my.txt";
 
 	// 채점 진행률 쓰레드 생성
 	globalSwitch = false;
 	waitj = thread(&SubmitChecker::waitJudge, this, ref(pick.getResult(NO)));
 
-	system("rm my.txt");
-	system(dockerCommand.c_str());
+	assert(system("rm my.txt") != -1);
+	assert(system(dockerCommand.c_str()) != -1);
 	globalSwitch = true;
 	waitj.join();
 
@@ -148,8 +148,36 @@ void SubmitChecker::check(const Query& pick)
 		assert(fscanf(fp, "%d%d", &cpuTime, &memory) == 2);
 
 	assert(sprintf(buf, "result_id = %d, time = %d, memory = %d", N, cpuTime, memory) > 0);
-
 	// judge result
 	db.getQuery("update solutions set " + string(buf) + " where id = " + pick.getResult(NO));
+
+	assert(sprintf(buf, "%d", N) > 0);
+
+	queue<Query> statQueue;
+
+	bool firstClear = false;
+	if(N == ACCEPT)
+	{
+		db.getQuery("select count from statistics where problem_id = " + pick.getResult(PROB_NO)\
+					 + " and user_id = " + pick.getResult(USER_NO) + " and result_id = " + string(buf), statQueue);
+		if(!statQueue.size() || atoi(statQueue.front().getResult(0).c_str()) == 0)
+			firstClear = true;
+	}
+
+
+	db.getQuery("insert into statistics (problem_id, user_id, result_id, count) values ("\
+					 + pick.getResult(PROB_NO) + "," + pick.getResult(USER_NO) + "," + string(buf)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	db.getQuery("insert into problem_statistics (problem_id, result_id, count) values ("\
+					 + pick.getResult(PROB_NO) + "," + string(buf)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	db.getQuery("insert into user_statistics (user_id, result_id, count) values ("\
+					 + pick.getResult(USER_NO) + "," + string(buf)\
+					 + ", 1) ON DUPLICATE KEY UPDATE count = count + 1");
+
+	if(firstClear)
+		db.getQuery("update users set total_clear = total_clear + 1 where id = " + pick.getResult(USER_NO));
 	fclose(fp);
 }

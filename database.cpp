@@ -32,6 +32,10 @@ DataBase::DataBase()
 	assert(fscanf(fp, "%s", buf) == 1);
 	db = buf;
 
+	// data 경로 입력
+	assert(fscanf(fp, "%s", buf) == 1);
+	dataPath = buf;
+
 	fclose(fp);
 
 	// DB 연결
@@ -68,4 +72,9 @@ void DataBase::getQuery(const string& sql, queue<Query>& queryQueue)
 	while((row = mysql_fetch_row(res)) != nullptr)
 		queryQueue.push(Query(row, mysql_num_fields(res)));
 	mysql_free_result(res);
+}
+
+const string& DataBase::getDataPath() const
+{
+	return dataPath;
 }
